@@ -95,23 +95,23 @@ def test_config_path(is_portable: bool, platform: str):
 @mock.patch.object(os.path, "sep", "\\")
 @mock.patch.object(paths, "mode", "portable")
 @mock.patch("platform.system", return_value="Windows")
-def test_config_path_custom_directory(platform_system):
-    directory = "C:\\users\\manuel\\downloads"
+def test_config_path_custom_directory(platform_system: mock.Mock) -> None:
+    directory: str = "C:\\users\\manuel\\downloads"
     with mock.patch("os.path.exists", return_value=False) as exists_mock:
         with mock.patch("os.mkdir") as mkdir_mock:
             with mock.patch.object(paths, "directory", directory):
-                p = paths.config_path()
-                expected_result = os.path.join(directory, "config")
+                p: str = paths.config_path()
+                expected_result: str = os.path.join(directory, "config")
                 assert p == expected_result
 
 @mock.patch.object(os.path, "sep", "\\")
 @mock.patch.object(paths, "mode", "portable")
 @mock.patch("platform.system", return_value="Windows")
-def test_logs_path_custom_directory(platform_system):
-    directory = "C:\\users\\manuel\\downloads"
+def test_logs_path_custom_directory(platform_system: mock.Mock) -> None:
+    directory: str = "C:\\users\\manuel\\downloads"
     with mock.patch("os.path.exists", return_value=False) as exists_mock:
         with mock.patch("os.mkdir") as mkdir_mock:
             with mock.patch.object(paths, "directory", directory):
-                p = paths.logs_path()
-                expected_result = os.path.join(directory, "logs")
+                p: str = paths.logs_path()
+                expected_result: str = os.path.join(directory, "logs")
                 assert p == expected_result
