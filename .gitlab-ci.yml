@@ -1,0 +1,17 @@
+stages:
+  - test
+
+test:mipy:
+  stage: test
+  tags:
+    - linux
+  image: python:3.7
+  interruptible: true
+  script:
+    - 'pip install --upgrade mypy'
+    - 'mypy src'
+  only:
+    - branches@manuelcortez/twblue2
+    - release
+    - tags
+    - schedules
