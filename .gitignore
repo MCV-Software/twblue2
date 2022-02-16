@@ -1,0 +1,3 @@
+**__pycache__
+src/.coverage
+*.mypy_cache
