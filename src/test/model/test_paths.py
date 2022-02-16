@@ -4,18 +4,18 @@ import os
 import pytest
 from unittest import mock
 # We rely in app_path from this module as we cannot reproduce always the app path using pytest. So we asume platform utils is right.
-from platform_utils.paths import app_path as get_app_path
+from platform_utils.paths import app_path as get_app_path # type: ignore
 from model import paths
 
-def test_app_path():
-    app_path = paths.app_path()
+def test_app_path() -> None:
+    app_path: str = paths.app_path()
     # This should point to the src path, as tests are running from there.
     assert app_path == get_app_path()
 
-def test_locale_path():
+def test_locale_path() -> None:
     assert paths.locale_path() == os.path.join(get_app_path(), "locales")
 
-def test_sound_path():
+def test_sound_path() -> None:
     assert paths.sound_path() == os.path.join(get_app_path(), "sounds")
 
 @mock.patch.dict(os.environ, dict(HOME="/home/manuel/", AppData="C:\\users\\manuel\\AppData\\roaming"))
@@ -27,7 +27,9 @@ def test_sound_path():
     (True, "Darwin"),
     (False, "Darwin")
 ])
-def test_logs_path(is_portable, platform):
+def test_logs_path(is_portable: bool, platform: str) -> None:
+    mode: str
+    expected_result: str
     if is_portable:
         mode = "portable"
     else:
@@ -36,7 +38,7 @@ def test_logs_path(is_portable, platform):
         with mock.patch("os.mkdir") as mkdir_mock:
             with mock.patch.object(paths, "mode", mode):
                 with mock.patch("platform.system", return_value=platform):
-                    p = paths.logs_path()
+                    p: str = paths.logs_path()
                     if platform == "Windows":
                         if mode == "portable":
                             expected_result = os.path.join(get_app_path(), "logs")
@@ -57,7 +59,9 @@ def test_logs_path(is_portable, platform):
     (True, "Darwin"),
     (False, "Darwin")
 ])
-def test_config_path(is_portable, platform):
+def test_config_path(is_portable: bool, platform: str):
+    mode: str
+    expected_result: str
     if is_portable:
         mode = "portable"
     else:
