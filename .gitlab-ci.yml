@@ -15,3 +15,28 @@ test:mipy:
     - release
     - tags
     - schedules
+
+test:pytest:
+  stage: test
+  tags:
+    - linux
+  image: python:3.8
+  interruptible: true
+  script:
+    - 'pip install --upgrade pytest coverage'
+    - 'pip install --upgrade -r requirements.txt'
+    - 'cd src'
+    - 'coverage run --source . -m pytest --junitxml=../report.xml'
+    - 'coverage report'
+    - 'coverage xml'
+    - 'mv coverage.xml ..'
+  only:
+    - branches@manuelcortez/twblue2
+    - release
+    - tags
+    - schedules
+  artifacts:
+    when: always
+    reports:
+      junit: report.xml
+      cobertura: coverage.xml
