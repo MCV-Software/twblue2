@@ -26,7 +26,7 @@ test:pytest:
     - 'pip install --upgrade pytest coverage'
     - 'pip install --upgrade -r requirements.txt'
     - 'cd src'
-    - 'coverage run --source . -m pytest --junitxml=../report.xml'
+    - 'coverage run --source . --ignore model/application.py -m pytest --junitxml=../report.xml'
     - 'coverage report'
     - 'coverage xml'
     - 'mv coverage.xml ..'
