@@ -7,6 +7,16 @@ from unittest import mock
 from platform_utils.paths import app_path as get_app_path # type: ignore
 from model import paths
 
+def test_setup_when_portable():
+    paths.mode = "portable"
+    paths.setup()
+    assert paths.mode == "portable" # No change
+
+def test_setup_when_installed():
+    with mock.patch("glob.glob", return_value=["uninstall.exe"]):
+        paths.setup()
+        assert paths.mode == "installed"
+
 def test_app_path() -> None:
     app_path: str = paths.app_path()
     # This should point to the src path, as tests are running from there.

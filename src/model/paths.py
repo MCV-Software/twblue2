@@ -15,9 +15,11 @@ directory: Union[str, os.PathLike] = ""
 # A reference to the current filesystem encoding so we would deal better with special encodings under Windows.
 fsencoding: str = sys.getfilesystemencoding()
 
-# Switch mode to installer if we find an "uninstall" file.
-if len(glob.glob("Uninstall.exe")) > 0:
-    mode= "installed"
+def setup():
+    global mode
+    # Switch mode to installer if we find an "uninstall" file.
+    if len(glob.glob("Uninstall.exe")) > 0:
+        mode= "installed"
 
 def app_path() -> str:
     """ Returns the path where the application files are located. """
