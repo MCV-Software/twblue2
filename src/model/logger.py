@@ -2,39 +2,42 @@
 import sys
 import os
 import logging
-import paths
+from typing import Type
+from types import TracebackType
 from logging.handlers import RotatingFileHandler
+from . import paths
 
-APP_LOG_FILE = 'debug.log'
-ERROR_LOG_FILE = "error.log"
-MESSAGE_FORMAT = "%(asctime)s %(name)s %(levelname)s: %(message)s"
-DATE_FORMAT = "%d/%m/%Y %H:%M:%S"
+APP_LOG_FILE: str = "debug.log"
+ERROR_LOG_FILE: str = "error.log"
+MESSAGE_FORMAT: str = "%(asctime)s %(name)s %(levelname)s: %(message)s"
+DATE_FORMAT: str = "%d-%m-%Y %H:%M:%S"
+logger: logging.Logger = logging.getLogger()
 
-def setup():
-    formatter = logging.Formatter(MESSAGE_FORMAT, datefmt=DATE_FORMAT)
-    requests_log = logging.getLogger("requests")
+def setup() -> None:
+    global logger
+    formatter: logging.Formatter = logging.Formatter(MESSAGE_FORMAT, datefmt=DATE_FORMAT)
+    requests_log: logging.Logger = logging.getLogger("requests")
     requests_log.setLevel(logging.WARNING)
-    urllib3 = logging.getLogger("urllib3")
+    urllib3: logging.Logger = logging.getLogger("urllib3")
     urllib3.setLevel(logging.WARNING)
-    requests_oauthlib = logging.getLogger("requests_oauthlib")
+    requests_oauthlib: logging.Logger = logging.getLogger("requests_oauthlib")
     requests_oauthlib.setLevel(logging.WARNING)
-    oauthlib = logging.getLogger("oauthlib")
+    oauthlib: logging.Logger = logging.getLogger("oauthlib")
     oauthlib.setLevel(logging.WARNING)
-    logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
-    app_handler = RotatingFileHandler(os.path.join(paths.logs_path(), APP_LOG_FILE), mode="w", encoding="utf-8")
+    app_handler: RotatingFileHandler = RotatingFileHandler(os.path.join(paths.logs_path(), APP_LOG_FILE), mode="w", encoding="utf-8")
     app_handler.setFormatter(formatter)
     app_handler.setLevel(logging.DEBUG)
     logger.addHandler(app_handler)
-    error_handler = logging.FileHandler(os.path.join(paths.logs_path(), ERROR_LOG_FILE), mode="w", encoding="utf-8")
+    error_handler: logging.FileHandler = logging.FileHandler(os.path.join(paths.logs_path(), ERROR_LOG_FILE), mode="w", encoding="utf-8")
     error_handler.setFormatter(formatter)
     error_handler.setLevel(logging.ERROR)
     logger.addHandler(error_handler)
 
-def setup_exception_handling():
+def setup_exception_handling() -> None:
     sys.excepthook = handle_exception
 
-def handle_exception(exc_type, exc_value, exc_traceback):
+def handle_exception(exc_type: Type[BaseException], exc_value: BaseException, exc_traceback: TracebackType) -> None:
     if issubclass(exc_type, KeyboardInterrupt):
         sys.__excepthook__(exc_type, exc_value, exc_traceback)
         return
