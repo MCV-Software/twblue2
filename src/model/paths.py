@@ -10,7 +10,7 @@ from platform_utils import paths as paths_ # type: ignore
 mode: str = "portable"
 
 # This will be the app's config directory, which would be different if the app is in either portable or installer mode.
-directory: Union[str, os.PathLike[str]] = ""
+directory: Union[str, os.PathLike] = ""
 
 # A reference to the current filesystem encoding so we would deal better with special encodings under Windows.
 fsencoding: str = sys.getfilesystemencoding()
@@ -25,17 +25,20 @@ def app_path() -> str:
 
 def config_path() -> str:
     """ Returns the app's config directory and creates it if it it doesn't exist yet.
-    Normally, config directory is $HOME/.appname/config under Linux/OS X and %appdata%\appname\config in windows (installer mode), or just "app_path\config" in portable mode.
-    """
+    Normally, config directory is $HOME/.appname/config under Linux/OS X and %appdata%\\appname\\config in windows (installer mode), or just "app_path\\config" in portable mode."""
     global mode, directory
     path: str
-    if mode == "portable":
-        if directory != "":
-            path = os.path.join(directory, "config")
-        elif directory == "":
-            path = os.path.join(app_path(), "config")
-    elif mode == "installed":
+    # Resolve first for non windows platforms, as should be in app config all the time.
+    if platform.system() != "Windows":
         path = os.path.join(data_path(), "config")
+    else:
+        if mode == "portable":
+            if directory != "":
+                path = os.path.join(directory, "config")
+            elif directory == "":
+                path = os.path.join(app_path(), "config")
+        elif mode == "installed":
+            path = os.path.join(data_path(), "config")
     if not os.path.exists(path):
         os.mkdir(path)
     return path
@@ -43,13 +46,17 @@ def config_path() -> str:
 def logs_path() -> str:
     global mode, directory
     path: str
-    if mode == "portable":
-        if directory != "":
-            path = os.path.join(directory, "logs")
-        elif directory == "":
-            path = os.path.join(app_path(), "logs")
-    elif mode == "installed":
+    # Resolve first for non windows platforms, as should be in app config all the time.
+    if platform.system() != "Windows":
         path = os.path.join(data_path(), "logs")
+    else:
+        if mode == "portable":
+            if directory != "":
+                path = os.path.join(directory, "logs")
+            elif directory == "":
+                path = os.path.join(app_path(), "logs")
+        elif mode == "installed":
+            path = os.path.join(data_path(), "logs")
     if not os.path.exists(path):
         os.mkdir(path)
     return path
@@ -57,7 +64,7 @@ def logs_path() -> str:
 def data_path(app_name: str = "TWBlue") -> str:
     data_path: str
     if platform.system() == "Windows":
-        data_path = os.path.join(cast(Union[str, os.PathLike[str]], os.getenv("AppData")), app_name)
+        data_path = os.path.join(cast(Union[str, os.PathLike], os.getenv("AppData")), app_name)
     else:
         data_path = os.path.join(os.environ['HOME'], ".%s" % app_name)
     if not os.path.exists(data_path):
