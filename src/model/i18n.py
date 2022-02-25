@@ -3,6 +3,7 @@ import os
 import locale
 import gettext
 import logging
+from typing import cast
 from . import paths
 
 log = logging.getLogger("model.i18n")
@@ -22,7 +23,7 @@ def setup(name: str, localepath: str = "locales", default_lang: str = "system"):
     """
     global lang
     if default_lang == "system":
-        lang = locale.getdefaultlocale()[0][:2]
+        lang = cast(str, locale.getdefaultlocale()[0])[:2]
     else:
         lang = default_lang
     os.environ["lang"] = lang

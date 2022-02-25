@@ -5,7 +5,7 @@ import logging
 from typing import Type, Any, Optional, cast
 from types import TracebackType
 from logging.handlers import RotatingFileHandler
-from pubsub import pub
+from pubsub import pub # type: ignore
 from . import paths
 
 APP_LOG_FILE: str = "debug.log"
