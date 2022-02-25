@@ -5,6 +5,7 @@ import logging
 from typing import Type, Any, Optional, cast
 from types import TracebackType
 from logging.handlers import RotatingFileHandler
+from pubsub import pub
 from . import paths
 
 APP_LOG_FILE: str = "debug.log"
@@ -33,6 +34,10 @@ def setup() -> None:
     error_handler.setFormatter(formatter)
     error_handler.setLevel(logging.ERROR)
     logger.addHandler(error_handler)
+    pub.subscribe(log_pub_messages, pub.ALL_TOPICS)
+
+def log_pub_messages(topicObj=pub.AUTO_TOPIC, **mesgData):
+    logger.debug("Received message for topic '%s': with args %r" % (topicObj.getName(), mesgData))
 
 def setup_exception_handling() -> None:
     sys.excepthook = handle_exception
