@@ -1,8 +1,14 @@
 # -*- coding: utf-8 -*-
+""" Logging setup for TWBlue
+
+This module should be setup during startup of the application, and will create a logs folder, located in :py:func:`model.paths.logs_path`
+
+There is also a special function that will debug all pubsub events when those are received.
+"""
 import sys
 import os
 import logging
-from typing import Type, Any, Optional, cast
+from typing import Type, Any, Optional, cast, Dict
 from types import TracebackType
 from logging.handlers import RotatingFileHandler
 from pubsub import pub # type: ignore
@@ -15,6 +21,7 @@ DATE_FORMAT: str = "%d-%m-%Y %H:%M:%S"
 logger: logging.Logger = logging.getLogger()
 
 def setup() -> None:
+    """ configure logging in TWBlue by enabling and disabling handlers according to our needs. """
     global logger
     formatter: logging.Formatter = logging.Formatter(MESSAGE_FORMAT, datefmt=DATE_FORMAT)
     requests_log: logging.Logger = logging.getLogger("requests")
@@ -36,13 +43,29 @@ def setup() -> None:
     logger.addHandler(error_handler)
     pub.subscribe(log_pub_messages, pub.ALL_TOPICS)
 
-def log_pub_messages(topicObj=pub.AUTO_TOPIC, **mesgData):
+def log_pub_message(topicObj: str = pub.AUTO_TOPIC, **mesgData: Dict[Any, Any]):
+    """ Callback function that logs messages sent via pubsub.
+
+    This function shoul not be called manually. It's just here for debugging purposes.
+
+    :param topicObj: Topic to log messages from. By default the function will be subscribed to :py:data:`pubsub.pub.ALL_TOPICS` -which is the root topic.
+    :type topicObj: str
+    :param mesgData: Arguments passed to the topic.
+    :type mesgData: dict
+    """
     logger.debug("Received message for topic '%s': with args %r" % (topicObj.getName(), mesgData))
 
 def setup_exception_handling() -> None:
+    """ Special function that configures python to print exceptions to log files, as opposed to raise them in console.
+
+    This is useful when running the application from a distribution folder and not in sources.
+
+    This basically replaces the excepthook in the sys module with the function :py:func:`handle_exception`
+    """
     sys.excepthook = handle_exception
 
 def handle_exception(exc_type: Type[BaseException], exc_value: BaseException, exc_traceback: Optional[TracebackType]) -> Any:
+    """ Logs all uncaught exceptions to a file. This should never be called directly. """
     if issubclass(exc_type, KeyboardInterrupt):
         sys.__excepthook__(exc_type, exc_value, cast(TracebackType, exc_traceback))
         return
