@@ -41,7 +41,7 @@ def setup() -> None:
     error_handler.setFormatter(formatter)
     error_handler.setLevel(logging.ERROR)
     logger.addHandler(error_handler)
-    pub.subscribe(log_pub_messages, pub.ALL_TOPICS)
+    pub.subscribe(log_pub_message, pub.ALL_TOPICS)
 
 def log_pub_message(topicObj: str = pub.AUTO_TOPIC, **mesgData: Dict[Any, Any]):
     """ Callback function that logs messages sent via pubsub.
