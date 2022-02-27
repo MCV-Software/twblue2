@@ -42,7 +42,7 @@ class MainController(object):
 
     def on_core_report_error(self):
         """ Callback function that opens the issue reporting feature in github. """
-        webbrowser.open_new_tab("https://github.com/mcv-software/twblue/issues")
+        webbrowser.get("windows-default").open("https://github.com/mcv-software/twblue/issues")
 
     def on_core_visit_website(self):
         """ Callback function that opens the TWBlue website.
@@ -52,7 +52,7 @@ class MainController(object):
         url = "https://twblue.es"
         if i18n.lang == "es":
             url = "https://twblue.es/es"
-        webbrowser.open_new_tab(url)
+        webbrowser.get("windows-default").open(url)
 
     def on_core_get_soundpacks(self):
         """ Callback function that opens the soundpacks section in the TWBlue website:
@@ -62,5 +62,5 @@ class MainController(object):
         url = "https://twblue.es"
         if i18n.lang == "es":
             url = "https://twblue.es/es"
-        webbrowser.open_new_tab(url+"/soundpacks")
+        webbrowser.get("windows-default").open(url+"/soundpacks")
 
