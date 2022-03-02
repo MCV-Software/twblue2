@@ -1,0 +1,7 @@
+[general]
+persist_size = integer(default=0)
+load_cache_in_memory=boolean(default=True)
+
+[session]
+type = string(default="base")
+name = string(default="Base session")
