@@ -1,6 +1,7 @@
 # -*- coding: cp1252 -*-
 """ Controller for session manager """
 import time
+import sys
 import wx
 from typing import Dict
 from pubsub import pub
@@ -47,8 +48,12 @@ class SessionManager(object):
         for session in self.sessions:
             name = session.get("name", "")
             self.view.list.Append(name)
-        self.view.ShowModal()
+        response = self.view.ShowModal()
         self.view.Destroy()
+        if response != wx.ID_OK:
+            sys.exit()
+        self.model.init_sessions(self.sessions)
+
 
     def on_new_account(self, type: str):
         """ Starts creation of a new session.

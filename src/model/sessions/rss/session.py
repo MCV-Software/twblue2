@@ -8,7 +8,7 @@ class Session(base.Session):
         This class is responsible for the interaction with RSS feeds within TWBlue.
         """
 
-    def __init__(self, name, *args, **kwargs):
+    def __init__(self, name="", *args, **kwargs):
         """ Class constructor
 
         :param name: Name of the session. This will be used mainly during session manager fase.
