@@ -1,3 +1,7 @@
 **__pycache__
 src/.coverage
 *.mypy_cache
+src/build/*
+src/twblue.dist/*
+src/logs/*
+src/config/*
