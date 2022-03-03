@@ -45,6 +45,9 @@ class SessionManager(object):
         here, all sessions that are actually valid will be added to the view's list and displayed to the user.
         """
         self.sessions = self.model.get_session_list()
+        if len(self.sessions) == 1:
+            self.view.Destroy()
+            return self.model.init_sessions(self.sessions)
         for session in self.sessions:
             name = session.get("name", "")
             self.view.list.Append(name)
@@ -53,7 +56,6 @@ class SessionManager(object):
         if response != wx.ID_OK:
             sys.exit()
         self.model.init_sessions(self.sessions)
-
 
     def on_new_account(self, type: str):
         """ Starts creation of a new session.
