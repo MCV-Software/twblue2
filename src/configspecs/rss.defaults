@@ -6,4 +6,4 @@ load_cache_in_memory=boolean(default=True)
 type = string(default="rss")
 name = string(default="Base session")
 
-[[feeds]]
+[feeds]
