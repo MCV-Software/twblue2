@@ -37,3 +37,6 @@ class Session(object):
         self.model.login()
         session_data = dict(type=self.model.type, name="{name} ({type})".format(name=name, type="rss"), id=self.model.session_id)
         pub.sendMessage("sessionmanager.add_session_to_list", session_data=session_data)
+
+    def create_buffers(self)
+        pub.sendMessage("core.create_buffer", buffer_type="RSSBuffer", session_type="rss", buffer_title="home", kwargs=dict(session=self.model, buffname="Home"))

@@ -85,3 +85,11 @@ class MainWindow(wx.Frame):
         self.sizer.Layout()
         self.SetClientSize(self.sizer.CalcMin())
 #  print self.GetSize()
+
+    def add_buffer(self, buffer, name):
+        self.tree.AddPage(buffer, name)
+        self.buffers[name] = buffer.GetId()
+
+    def insert_buffer(self, buffer, name, pos):
+        self.tree.InsertSubPage(pos, buffer, name)
+        self.buffers[name] = buffer.GetId()

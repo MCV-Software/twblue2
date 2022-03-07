@@ -9,6 +9,7 @@ import webbrowser
 from pubsub import pub # type: ignore
 from model import mainModel, i18n
 from view import mainWindow
+from controller.sessions import rss
 
 class MainController(object):
     """ Main controller of TWBlue. """
@@ -21,6 +22,7 @@ class MainController(object):
         self.view.prepare()
         self.subscribe_core_events()
         self.view.Show()
+        self.session_controllers = {}
 
     def subscribe_core_events(self):
         """ Subscribe core pubsub events to responses. """
@@ -29,6 +31,7 @@ class MainController(object):
         pub.subscribe(self.on_core_report_error, "core.report_error")
         pub.subscribe(self.on_core_visit_website, "core.visit_website")
         pub.subscribe(self.on_core_get_soundpacks, "core.get_soundpacks")
+        pub.subscribe(self.on_create_buffer, "core.create_buffer")
 #        pub.subscribe(self.on_core_about, "core.about")
 
     ### Callback functions.
@@ -63,4 +66,15 @@ class MainController(object):
         if i18n.lang == "es":
             url = "https://twblue.es/es"
         webbrowser.get("windows-default").open(url+"/soundpacks")
+
+    def on_create_buffer(self, buffer_type="RSSBuffer", session_type="rss", buffer_title="", parent_tab=None, start=False, kwargs={}):
+        if not hasattr(session_type, buffer_type):
+            raise AttributeError("Session type %s does not exist yet." % (session_type))
+        buffer = getattr(session_type, buffer_type)(parent=sel.view.tree, **kwargs)
+        buffer.create_gui()
+        self.buffers.append(buffer)
+        if parent_tab == None:
+            self.view.add_buffer(buffer.view, buffer_title)
+        else:
+            self.view.insert_buffer(buffer.view, buffer_title, parent_tab)
 
