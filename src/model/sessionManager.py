@@ -4,7 +4,7 @@ import shutil
 import time
 import os
 import logging
-from model import output, paths, config_loader, appvars, sessions
+from model import output, paths, config_loader
 from controller import config
 from pubsub import pub
 
@@ -51,14 +51,3 @@ class SessionManager(object):
 
     def remove_account(self, index):
         shutil.rmtree(path=os.path.join(paths.config_path(), selected_account.get("id")), ignore_errors=True)
-
-    def init_sessions(self, session_data):
-        for s in session_data:
-            tpe = s.get("type", "")
-            id = s.get("id", "")
-            if hasattr(sessions, tpe) == False:
-                raise ValueError("Session of type %s does not exist." % (tpe))
-            m = getattr(sessions, tpe)
-            session = getattr(m, "Session")(session_id=id)
-            session.get_configuration()
-            appvars.sessions[id] = session
