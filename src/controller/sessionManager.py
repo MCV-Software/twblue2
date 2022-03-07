@@ -8,6 +8,7 @@ from pubsub import pub
 from model import sessionManager as model
 from view import sessionManager as view
 from controller import sessions
+from model import appvars
 
 class SessionManager(object):
     """ Session manager controller class
@@ -25,9 +26,6 @@ class SessionManager(object):
         self.started = started
         self.view = view.SessionManagerWindow()
         self.model = model.SessionManager()
-        pub.subscribe(self.on_new_account, "sessionmanager.new_account")
-        pub.subscribe(self.on_add_session_to_list, "sessionmanager.add_session_to_list")
-#        pub.subscribe(self.remove_account, "sessionmanager.remove_account")
 #        if self.started == False:
 #            pub.subscribe(self.configuration, "sessionmanager.configuration")
 #        else:
@@ -36,6 +34,17 @@ class SessionManager(object):
         self.new_sessions = {}
         self.removed_sessions = []
         self.sessions = []
+        self.subscribe_events()
+
+    def subscribe_events(self):
+        pub.subscribe(self.on_new_account, "sessionmanager.new_account")
+        pub.subscribe(self.on_add_session_to_list, "sessionmanager.add_session_to_list")
+#        pub.subscribe(self.remove_account, "sessionmanager.remove_account")
+
+    def unsubscribe_events(self):
+        pub.unsubscribe(self.on_new_account, "sessionmanager.new_account")
+        pub.unsubscribe(self.on_add_session_to_list, "sessionmanager.add_session_to_list")
+#        pub.unsubscribe(self.remove_account, "sessionmanager.remove_account")
 
     def start(self):
         """ Starts work on session manager module.
@@ -47,7 +56,8 @@ class SessionManager(object):
         self.sessions = self.model.get_session_list()
         if len(self.sessions) == 1:
             self.view.Destroy()
-            return self.model.init_sessions(self.sessions)
+            self.unsubscribe_events()
+            return self.init_sessions()
         for session in self.sessions:
             name = session.get("name", "")
             self.view.list.Append(name)
@@ -55,7 +65,16 @@ class SessionManager(object):
         self.view.Destroy()
         if response != wx.ID_OK:
             sys.exit()
-        self.model.init_sessions(self.sessions)
+        self.unsubscribe_events()
+        self.init_sessions()
+
+    def init_sessions(self):
+        for s in self.sessions:
+            session_type = s.get("type", "")
+            m = getattr(sessions, session_type)
+            session_object = getattr(m, "Session")(s.get("id", ""))
+            session_object.confirm_data(s.get("name", ""))
+            appvars.sessions[s.get("id")] = session_object
 
     def on_new_account(self, type: str):
         """ Starts creation of a new session.
