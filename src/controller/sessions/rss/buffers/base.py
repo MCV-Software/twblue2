@@ -14,5 +14,5 @@ class RSSBuffer(object):
         self.view = None
 
     def create_gui(self):
-        self.view = view.RSSBuffer(parent=parent)
+        self.view = view.RSSBuffer(parent=self.parent)
 

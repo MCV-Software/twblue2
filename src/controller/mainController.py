@@ -10,6 +10,7 @@ from pubsub import pub # type: ignore
 from model import mainModel, i18n
 from view import mainWindow
 from controller.sessions import rss
+from model import appvars
 
 class MainController(object):
     """ Main controller of TWBlue. """
@@ -19,10 +20,11 @@ class MainController(object):
         super(MainController, self).__init__()
         self.view = mainWindow.MainWindow()
         self.model = mainModel.MainModel()
+        self.buffers = []
         self.view.prepare()
         self.subscribe_core_events()
         self.view.Show()
-        self.session_controllers = {}
+        self.start()
 
     def subscribe_core_events(self):
         """ Subscribe core pubsub events to responses. """
@@ -33,6 +35,10 @@ class MainController(object):
         pub.subscribe(self.on_core_get_soundpacks, "core.get_soundpacks")
         pub.subscribe(self.on_create_buffer, "core.create_buffer")
 #        pub.subscribe(self.on_core_about, "core.about")
+
+    def start(self):
+        for session_id in appvars.sessions:
+            appvars.sessions[session_id].create_buffers()
 
     ### Callback functions.
     def on_core_documentation(self):
@@ -68,9 +74,11 @@ class MainController(object):
         webbrowser.get("windows-default").open(url+"/soundpacks")
 
     def on_create_buffer(self, buffer_type="RSSBuffer", session_type="rss", buffer_title="", parent_tab=None, start=False, kwargs={}):
-        if not hasattr(session_type, buffer_type):
-            raise AttributeError("Session type %s does not exist yet." % (session_type))
-        buffer = getattr(session_type, buffer_type)(parent=sel.view.tree, **kwargs)
+        if session_type == "rss":
+            m = rss
+        if hasattr(m, buffer_type) == False:
+            raise AttributeError("Session type %s.%s does not exist yet." % (session_type, buffer_type))
+        buffer = getattr(m, buffer_type)(parent=self.view.tree, **kwargs)
         buffer.create_gui()
         self.buffers.append(buffer)
         if parent_tab == None:
