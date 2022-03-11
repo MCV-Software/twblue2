@@ -13,20 +13,20 @@ class Session(object):
         """
         self.session_id = session_id
 
-    def create_session(self):
-        """ Starts the session creation process
+    def authorize_session(self):
+        """ Starts the session authorization process
 
-        This function is responsible to ask information about the session to the user, and calling to :py:func:`Session.confirm_data` if user has decided to create the session.
+        This function is responsible to ask information about the session to the user, and calling to :py:func:`Session.create_session` if user has decided to create the session.
         """
         dlg = view.CreateSessionDialog()
         response = dlg.get_response()
         if response == True:
             name = dlg.name.GetValue()
-            self.confirm_data(name=name)
+            self.create_session(name=name)
         dlg.Destroy()
 
-    def confirm_data(self, name: str):
-        """ Finish the session creation process by instantiating the session model and configuring it
+    def create_session(self, name: str):
+        """ Creates a session by instantiating a session model and configuring it
 
         :param name: Session name, as provided by the user in view.
         :type name: str
@@ -39,4 +39,4 @@ class Session(object):
         pub.sendMessage("sessionmanager.add_session_to_list", session_data=session_data)
 
     def create_buffers(self):
-        pub.sendMessage("core.create_buffer", buffer_type="RSSBuffer", session_type="rss", buffer_title="home", kwargs=dict(session=self.model, buffname="Home"))
+        pub.sendMessage("core.create_buffer", buffer_type="RSSBuffer", session_type="rss", buffer_title="home", session_id=self.session_id, kwargs=dict(buffname="Home"))
