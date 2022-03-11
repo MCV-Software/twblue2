@@ -73,7 +73,7 @@ class SessionManager(object):
             session_type = s.get("type", "")
             m = getattr(sessions, session_type)
             session_object = getattr(m, "Session")(s.get("id", ""))
-            session_object.confirm_data(s.get("name", ""))
+            session_object.create_session(s.get("name", ""))
             appvars.sessions[s.get("id")] = session_object
 
     def on_new_account(self, type: str):
@@ -91,7 +91,7 @@ class SessionManager(object):
             raise ValueError("Session type %s does not exist." % (type))
         m = getattr(sessions, type)
         s = getattr(m, "Session")(location)
-        s.create_session()
+        s.authorize_session()
 
     def on_add_session_to_list(self, session_data: Dict[str, str]):
         """ Ads a new session to the list of available sessions in the manager
