@@ -12,6 +12,7 @@ class RSSBuffer(object):
         self.session = session
         self.parent = parent
         self.view = None
+        self.model = model.RSSBuffer(session=self.session, name=self.name, *self.args, **self.kwargs)
 
     def create_gui(self):
         self.view = view.RSSBuffer(parent=self.parent)
