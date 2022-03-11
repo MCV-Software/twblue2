@@ -37,8 +37,8 @@ class MainController(object):
 #        pub.subscribe(self.on_core_about, "core.about")
 
     def start(self):
-        for session_id in appvars.sessions:
-            appvars.sessions[session_id].create_buffers()
+        for session in appvars.get_sessions():
+            session.create_buffers()
 
     ### Callback functions.
     def on_core_documentation(self):
@@ -73,12 +73,14 @@ class MainController(object):
             url = "https://twblue.es/es"
         webbrowser.get("windows-default").open(url+"/soundpacks")
 
-    def on_create_buffer(self, buffer_type="RSSBuffer", session_type="rss", buffer_title="", parent_tab=None, start=False, kwargs={}):
+    def on_create_buffer(self, buffer_type="RSSBuffer", session_type="rss", session_id=None, buffer_title="", parent_tab=None, start=False, kwargs={}):
         if session_type == "rss":
             m = rss
         if hasattr(m, buffer_type) == False:
             raise AttributeError("Session type %s.%s does not exist yet." % (session_type, buffer_type))
-        buffer = getattr(m, buffer_type)(parent=self.view.tree, **kwargs)
+        # Retrieves the session that originated this event.
+        session = appvars.get_session(session_id)
+        buffer = getattr(m, buffer_type)(parent=self.view.tree, session=session, **kwargs)
         buffer.create_gui()
         self.buffers.append(buffer)
         if parent_tab == None:
