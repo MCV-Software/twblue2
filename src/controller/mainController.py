@@ -7,7 +7,7 @@ Ideally, we are supposed to not include any logic within controllers, except whe
 """
 import webbrowser
 from pubsub import pub # type: ignore
-from model import mainModel, i18n
+from model import mainModel, i18n, repeating_timer, thread_utils
 from view import mainWindow
 from controller.sessions import rss
 from model import appvars
@@ -39,6 +39,13 @@ class MainController(object):
     def start(self):
         for session in appvars.get_sessions():
             session.create_buffers()
+        thread_utils.call_threaded(self.update_buffers)
+        self.update_schedule = repeating_timer.RepeatingTimer(60, self.update_buffers)
+        self.update_schedule.start()
+
+    def update_buffers(self):
+        for b in self.buffers:
+            b.get_items()
 
     ### Callback functions.
     def on_core_documentation(self):
