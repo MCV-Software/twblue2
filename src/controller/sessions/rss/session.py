@@ -39,4 +39,6 @@ class Session(object):
         pub.sendMessage("sessionmanager.add_session_to_list", session_data=session_data)
 
     def create_buffers(self):
-        pub.sendMessage("core.create_buffer", buffer_type="RSSBuffer", session_type="rss", buffer_title="home", session_id=self.session_id, kwargs=dict(buffname="Home"))
+        sites = list(self.model.settings["feeds"].keys())
+        for site in sites:
+            pub.sendMessage("core.create_buffer", buffer_type="RSSBuffer", session_type="rss", buffer_title=site, session_id=self.session_id, kwargs=dict(buffname=site, site=site))
