@@ -43,7 +43,7 @@ class Session(base.Session):
         self.db[buffer_name] = objects
         return added_items
 
-    def get_items(self, site=""):
+    def get_items(self, site="", *args, **kwargs):
         site_rss = self.settings["feeds"].get(site, "")
         if site_rss == "":
             raise ValueError("Site name %s does not contain any rss feed" % (site))
