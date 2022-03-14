@@ -1,9 +1,11 @@
 # -*- coding: UTF-8 -*-
 import wx
+from pubsub import pub
 
 class RSSBuffer(wx.Panel):
-    def __init__(self, *args, **kwds):
+    def __init__(self, name, *args, **kwds):
         super(RSSBuffer, self).__init__(*args, **kwds)
+        self.name = name
         main_sizer = wx.BoxSizer(wx.VERTICAL)
         items_sizer = wx.WrapSizer(wx.HORIZONTAL)
         main_sizer.Add(items_sizer, 1, wx.EXPAND, 0)
@@ -14,6 +16,8 @@ class RSSBuffer(wx.Panel):
         buttons_sizer = wx.BoxSizer(wx.HORIZONTAL)
         main_sizer.Add(buttons_sizer, 1, wx.EXPAND, 0)
         self.open = wx.Button(self, wx.ID_OPEN)
+        self.open.SetDefault()
+        self.open.Bind(wx.EVT_BUTTON, lambda event: pub.sendMessage("rss.open_link", item=self.items.GetSelection(), buffer_name=self.name))
         buttons_sizer.Add(self.open, 0, 0, 0)
         self.copy_link = wx.Button(self, wx.ID_ANY, _("Copy link"))
         buttons_sizer.Add(self.copy_link, 0, 0, 0)
