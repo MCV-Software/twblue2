@@ -10,8 +10,11 @@ Welcome to TWBlue's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   modules
+   coding
+   model
    view
+   controller
+   modules
 
 Indices and tables
 ==================
