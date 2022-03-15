@@ -20,6 +20,7 @@ class RSSBuffer(wx.Panel):
         self.open.Bind(wx.EVT_BUTTON, lambda event: pub.sendMessage("rss.open_link", item=self.items.GetSelection(), buffer_name=self.name))
         buttons_sizer.Add(self.open, 0, 0, 0)
         self.copy_link = wx.Button(self, wx.ID_ANY, _("Copy link"))
+        self.copy_link.Bind(wx.EVT_BUTTON, lambda event: pub.sendMessage("rss.copy_link", item=self.items.GetSelection(), buffer_name=self.name))
         buttons_sizer.Add(self.copy_link, 0, 0, 0)
         self.SetSizer(main_sizer)
         main_sizer.Fit(self)
