@@ -20,7 +20,6 @@ class MainController(object):
         super(MainController, self).__init__()
         self.view = mainWindow.MainWindow()
         self.model = mainModel.MainModel()
-        self.buffers = []
         self.view.prepare()
         self.subscribe_core_events()
         self.view.Show()
@@ -37,6 +36,7 @@ class MainController(object):
 #        pub.subscribe(self.on_core_about, "core.about")
 
     def start(self):
+        """ Starts the application logic by calling create_buffers in all sessions and setting the function to retrieve items in the buffers. """
         for session in appvars.get_sessions():
             session.create_buffers()
         thread_utils.call_threaded(self.update_buffers)
@@ -44,7 +44,8 @@ class MainController(object):
         self.update_schedule.start()
 
     def update_buffers(self):
-        for b in self.buffers:
+        """ performs an update in all active buffers, by retrieving last posted items. """
+        for b in self.model.buffers:
             b.get_items()
 
     ### Callback functions.
@@ -81,6 +82,23 @@ class MainController(object):
         webbrowser.get("windows-default").open(url+"/soundpacks")
 
     def on_create_buffer(self, buffer_type="RSSBuffer", session_type="rss", session_id=None, buffer_title="", parent_tab=None, start=False, kwargs={}):
+        """ Buffer creator function. This will configure a new buffer based in parameters sent in the pubsub event.
+
+        :param buffer_type: type of buffer to create. This must exist as a class in the session you need to instantiate.
+        :type buffer_type: str
+        :param session_type: Session type needed to create the buffer.
+        :type session_type: str
+        :param session_id: ID of the session that requested this buffer.
+        :type session_id: str
+        :param buffer_title: Title of the buffer. This will be used in the GUI as the name of the tree item associated with the buffer.
+        :type buffer_title: str
+        :param parent_tab: Name of the tab this buffer belongs to.
+        :type parent_tab: str
+        :param start: Whether to start the buffer upon creation or wait until the buffer gets updated periodically.
+        :type start: bool
+        :param kwargs: List of arguments required by the buffer class.
+        :type kwargs: dict
+        """
         if session_type == "rss":
             m = rss
         if hasattr(m, buffer_type) == False:
@@ -89,7 +107,7 @@ class MainController(object):
         session = appvars.get_session(session_id)
         buffer = getattr(m, buffer_type)(parent=self.view.tree, session=session, **kwargs)
         buffer.create_gui()
-        self.buffers.append(buffer)
+        self.model.buffers.append(buffer)
         if parent_tab == None:
             self.view.add_buffer(buffer.view, buffer_title)
         else:

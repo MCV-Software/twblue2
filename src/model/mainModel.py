@@ -9,6 +9,9 @@ from . import i18n, paths
 
 class MainModel(object):
 
+    def __init__(self):
+        self.buffers = []
+
     def open_local_document(self, docname):
         documents_path = os.path.abspath(os.path.join(paths.app_path(), "documentation", i18n.lang))
         file = os.path.join(documents_path, docname)
