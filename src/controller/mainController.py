@@ -10,6 +10,7 @@ from pubsub import pub # type: ignore
 from model import mainModel, i18n, repeating_timer, thread_utils
 from view import mainWindow
 from controller.sessions import rss
+from controller.sessions import account
 from model import appvars
 
 class MainController(object):
@@ -32,6 +33,7 @@ class MainController(object):
         pub.subscribe(self.on_core_report_error, "core.report_error")
         pub.subscribe(self.on_core_visit_website, "core.visit_website")
         pub.subscribe(self.on_core_get_soundpacks, "core.get_soundpacks")
+        pub.subscribe(self.on_create_account, "core.create_account")
         pub.subscribe(self.on_create_buffer, "core.create_buffer")
 #        pub.subscribe(self.on_core_about, "core.about")
 
@@ -46,7 +48,8 @@ class MainController(object):
     def update_buffers(self):
         """ performs an update in all active buffers, by retrieving last posted items. """
         for b in self.model.buffers:
-            b.get_items()
+            if hasattr(b, "get_items"):
+                b.get_items()
 
     ### Callback functions.
     def on_core_documentation(self):
@@ -80,6 +83,23 @@ class MainController(object):
         if i18n.lang == "es":
             url = "https://twblue.es/es"
         webbrowser.get("windows-default").open(url+"/soundpacks")
+
+    def on_create_account(self, session_id=None, buffer_title="", kwargs={}):
+        """ Creates a special buffer to hold an account at TWBlue.
+
+        :param session_id: ID of the session that requested this buffer.
+        :type session_id: str
+        :param buffer_title: Title of the buffer. This will be used in the GUI as the name of the tree item associated with the buffer.
+        :type buffer_title: str
+        :param kwargs: List of arguments required by the buffer class.
+        :type kwargs: dict
+        """
+        # Retrieves the session that originated this event.
+        session = appvars.get_session(session_id)
+        buffer = account.AccountBuffer(parent=self.view.tree, session=session, buffname=session.session_id)
+        buffer.create_gui()
+        self.model.buffers.append(buffer)
+        self.view.add_buffer(buffer.view, buffer_title)
 
     def on_create_buffer(self, buffer_type="RSSBuffer", session_type="rss", session_id=None, buffer_title="", parent_tab=None, start=False, kwargs={}):
         """ Buffer creator function. This will configure a new buffer based in parameters sent in the pubsub event.
