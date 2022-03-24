@@ -131,5 +131,8 @@ class MainController(object):
         if parent_tab == None:
             self.view.add_buffer(buffer.view, buffer_title)
         else:
-            self.view.insert_buffer(buffer.view, buffer_title, parent_tab)
+            tab_position = self.view.search_buffer(parent_tab)
+            if tab_position == None:
+                tab_position = 0
+            self.view.insert_buffer(buffer.view, buffer_title, tab_position)
 

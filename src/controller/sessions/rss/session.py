@@ -44,4 +44,4 @@ class Session(object):
         pub.sendMessage("core.create_account", session_id=self.session_id, buffer_title=self.name)
         sites = list(self.model.settings["feeds"].keys())
         for site in sites:
-            pub.sendMessage("core.create_buffer", buffer_type="RSSBuffer", session_type="rss", buffer_title=site, session_id=self.session_id, kwargs=dict(buffname=site, site=site))
+            pub.sendMessage("core.create_buffer", buffer_type="RSSBuffer", session_type="rss", buffer_title=site, session_id=self.session_id, parent_tab=self.session_id, kwargs=dict(buffname=site, site=site))

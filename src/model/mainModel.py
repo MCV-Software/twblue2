@@ -10,6 +10,7 @@ from . import i18n, paths
 class MainModel(object):
 
     def __init__(self):
+        # Here we will store controllers for buffers.
         self.buffers = []
 
     def open_local_document(self, docname):
