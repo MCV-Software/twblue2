@@ -36,9 +36,12 @@ class Session(object):
         self.model.get_configuration()
         self.model.login()
         session_data = dict(type=self.model.type, name="{name} ({type})".format(name=name, type="rss"), id=self.model.session_id)
+        # Make name available as an attribute of the controller session so we can catch this for displaying it in the tree view later.
+        self.name="{name} ({type})".format(name=name, type="rss")
         pub.sendMessage("sessionmanager.add_session_to_list", session_data=session_data)
 
     def create_buffers(self):
+        pub.sendMessage("core.create_account", session_id=self.session_id, buffer_title=self.name)
         sites = list(self.model.settings["feeds"].keys())
         for site in sites:
             pub.sendMessage("core.create_buffer", buffer_type="RSSBuffer", session_type="rss", buffer_title=site, session_id=self.session_id, kwargs=dict(buffname=site, site=site))
