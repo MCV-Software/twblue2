@@ -93,3 +93,8 @@ class MainWindow(wx.Frame):
     def insert_buffer(self, buffer, name, pos):
         self.tree.InsertSubPage(pos, buffer, name)
         self.buffers[name] = buffer.GetId()
+
+    def search_buffer(self, tab_name):
+        for i in range(self.tree.GetPageCount()):
+            if   self.tree.GetPage(i).name == tab_name:
+                return i
