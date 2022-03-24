@@ -38,7 +38,7 @@ class SessionManager(object):
                         os.exception("Exception thrown while removing malformed session")
                         continue
                 if config_test.get("session", {}).get("type") != None:
-                    name = _("{account_name} ({type})").format(account_name=config_test["session"]["name"], type=config_test["session"]["type"])
+                    name = config_test.get("session", {}).get("name")
                     sessionsList.append(dict(type=config_test.get("session", {}).get("type"), id=i, name=name))
                 else:
                     try:
