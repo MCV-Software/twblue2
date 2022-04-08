@@ -1,4 +1,5 @@
 from pubsub import pub
+from controller import config
 from model.sessions import rss as model
 from view.sessions.rss import dialogs as view
 
@@ -40,8 +41,11 @@ class Session(object):
         self.name="{name} ({type})".format(name=name, type="rss")
         pub.sendMessage("sessionmanager.add_session_to_list", session_data=session_data)
 
-    def create_buffers(self):
+    def create_buffers(self, force=False):
         pub.sendMessage("core.create_account", session_id=self.session_id, buffer_title=self.name)
+        # Avoid creating buffers if session is ignored and force is not set to True
+        if self.session_id in config.app["sessions"]["ignored_sessions"] and force == False:
+            return
         sites = list(self.model.settings["feeds"].keys())
         for site in sites:
             pub.sendMessage("core.create_buffer", buffer_type="RSSBuffer", session_type="rss", buffer_title=site, session_id=self.session_id, parent_tab=self.session_id, kwargs=dict(buffname=site, site=site))
