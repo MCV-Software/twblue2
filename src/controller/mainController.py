@@ -35,6 +35,7 @@ class MainController(object):
         pub.subscribe(self.on_core_get_soundpacks, "core.get_soundpacks")
         pub.subscribe(self.on_create_account, "core.create_account")
         pub.subscribe(self.on_create_buffer, "core.create_buffer")
+        pub.subscribe(self.update_buffers, "core.update_buffers")
 #        pub.subscribe(self.on_core_about, "core.about")
 
     def start(self):
@@ -45,9 +46,17 @@ class MainController(object):
         self.update_schedule = repeating_timer.RepeatingTimer(60, self.update_buffers)
         self.update_schedule.start()
 
-    def update_buffers(self):
-        """ performs an update in all active buffers, by retrieving last posted items. """
-        for b in self.model.buffers:
+    def update_buffers(self, session_id=None):
+        """ performs an update in all active buffers, by retrieving last posted items.
+
+        :param session_id: If set to any existing session ID, it will update only buffers belonging to such session.
+        :type session_id: str
+        """
+        if session_id != None:
+            available_buffers = [b for b in self.model.buffers if b.session.session_id == session_id]
+        else:
+            available_buffers = [b for b in self.model.buffers]
+        for b in available_buffers:
             if hasattr(b, "get_items"):
                 b.get_items()
 
