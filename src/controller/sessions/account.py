@@ -36,3 +36,4 @@ class AccountBuffer(object):
         if self.session.name != name:
             return
         self.session.create_buffers(force=True)
+        pub.sendMessage("core.update_buffers", session_id=self.session.session_id)
