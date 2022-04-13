@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """ Base GUI class for the Session manager module."""
-import wx
-from pubsub import pub
+import wx # type: ignore
+from pubsub import pub # type: ignore
+from typing import List
 
 class SessionManagerWindow(wx.Dialog):
     """ Dialog that displays all session managing capabilities to users. """
@@ -34,13 +35,13 @@ class SessionManagerWindow(wx.Dialog):
         min = sizer.CalcMin()
         self.SetClientSize(min)
 
-    def fill_list(self, sessionsList):
+    def fill_list(self, sessionsList: List[str]):
         for i in sessionsList:
             self.list.Append(i)
         if self.list.GetCount() > 0:
             self.list.SetSelection(0)
 
-    def ok(self, ev):
+    def ok(self, ev: wx.Event):
         if self.list.GetCount() == 0:
             wx.MessageDialog(self, _("You need to configure an account."), _("Account Error"), wx.ICON_ERROR).ShowModal()
             return
@@ -74,7 +75,7 @@ class SessionManagerWindow(wx.Dialog):
     def on_configuration(self, *args, **kwargs):
         pub.sendMessage("sessionmanager.configuration")
 
-    def remove_session(self, sessionID):
+    def remove_session(self, sessionID: str):
         self.list.remove_item(sessionID)
 
     def hide_configuration(self):
