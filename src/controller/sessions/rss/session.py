@@ -1,4 +1,5 @@
-from pubsub import pub
+from typing import List, Any, cast
+from pubsub import pub # type: ignore
 from controller import config
 from model.sessions import rss as model
 from view.sessions.rss import dialogs as view
@@ -20,9 +21,9 @@ class Session(object):
         This function is responsible to ask information about the session to the user, and calling to :py:func:`Session.create_session` if user has decided to create the session.
         """
         dlg = view.CreateSessionDialog()
-        response = dlg.get_response()
+        response: bool = dlg.get_response()
         if response == True:
-            name = dlg.name.GetValue()
+            name: str = dlg.name.GetValue()
             self.create_session(name=name)
         dlg.Destroy()
 
@@ -41,11 +42,11 @@ class Session(object):
         self.name="{name} ({type})".format(name=name, type="rss")
         pub.sendMessage("sessionmanager.add_session_to_list", session_data=session_data)
 
-    def create_buffers(self, force=False):
+    def create_buffers(self, force: bool = False):
         pub.sendMessage("core.create_account", session_id=self.session_id, buffer_title=self.name)
         # Avoid creating buffers if session is ignored and force is not set to True
-        if self.session_id in config.app["sessions"]["ignored_sessions"] and force == False:
+        if self.session_id in config.app["sessions"]["ignored_sessions"] and force == False: # type: ignore
             return
-        sites = list(self.model.settings["feeds"].keys())
+        sites: List[str]  = list(self.model.settings["feeds"].keys())
         for site in sites:
             pub.sendMessage("core.create_buffer", buffer_type="RSSBuffer", session_type="rss", buffer_title=site, session_id=self.session_id, parent_tab=self.session_id, kwargs=dict(buffname=site, site=site))

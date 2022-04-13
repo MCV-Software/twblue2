@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
+from typing import Any, Optional
 from view.sessions import account as view
 from model.sessions import account as model
-from pubsub import pub
+from pubsub import pub # type: ignore
 
 class AccountBuffer(object):
 
-    def __init__(self, parent, session, buffname, *args, **kwargs):
+    def __init__(self, parent: Any, session: Any, buffname: str, *args, **kwargs):
         super(AccountBuffer, self).__init__()
         self.args = args
         self.kwargs = kwargs
         self.session = session
         self.parent = parent
         self.name = buffname
-        self.view = None
+        self.view: Optional[Any] = None
         self.model = model.Account(session_id=self.session.session_id)
         self.subscribe_events()
 
@@ -27,12 +28,12 @@ class AccountBuffer(object):
         pub.unsubscribe(self.on_autologin_changed, "account.autologin")
         pub.subscribe(self.on_login, "account.login_session")
 
-    def on_autologin_changed(self, name, autologin):
+    def on_autologin_changed(self, name: str, autologin: bool):
         if name != self.session.name:
             return
         self.model.autologin()
 
-    def on_login(self, name):
+    def on_login(self, name: str):
         if self.session.name != name:
             return
         self.session.create_buffers(force=True)

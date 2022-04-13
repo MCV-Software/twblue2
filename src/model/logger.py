@@ -43,7 +43,7 @@ def setup() -> None:
     logger.addHandler(error_handler)
     pub.subscribe(log_pub_message, pub.ALL_TOPICS)
 
-def log_pub_message(topicObj: str = pub.AUTO_TOPIC, **mesgData: Dict[Any, Any]):
+def log_pub_message(topicObj: Any = pub.AUTO_TOPIC, **mesgData: Dict[Any, Any]):
     """ Callback function that logs messages sent via pubsub.
 
     This function shoul not be called manually. It's just here for debugging purposes.

@@ -2,9 +2,9 @@
 """ Controller for session manager """
 import time
 import sys
-import wx
-from typing import Dict
-from pubsub import pub
+import wx # type: ignore
+from typing import Dict, List, Any
+from pubsub import pub # type: ignore
 from model import sessionManager as model
 from view import sessionManager as view
 from controller import sessions
@@ -31,9 +31,9 @@ class SessionManager(object):
 #        else:
         self.view.hide_configuration()
         # Store a temporary copy of new and removed sessions, so we will perform actions on them during call to on_ok.
-        self.new_sessions = {}
-        self.removed_sessions = []
-        self.sessions = []
+        self.new_sessions: Dict[str, Any] = {}
+        self.removed_sessions: List[str] = []
+        self.sessions: List[Any] = []
         self.subscribe_events()
 
     def subscribe_events(self):
