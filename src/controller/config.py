@@ -3,7 +3,7 @@
 import os
 import logging
 import platform
-from pubsub import pub
+from pubsub import pub # type: ignore
 from model import config_loader, paths
 from view import messages
 

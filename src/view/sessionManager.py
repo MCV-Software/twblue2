@@ -43,7 +43,7 @@ class SessionManagerWindow(wx.Dialog):
 
     def ok(self, ev: wx.Event):
         if self.list.GetCount() == 0:
-            wx.MessageDialog(self, _("You need to configure an account."), _("Account Error"), wx.ICON_ERROR).ShowModal()
+            wx.MessageDialog(self, _("You need to configure an account."), _("Account Error"), wx.ICON_ERROR).ShowModal() # type: ignore
             return
         self.EndModal(wx.ID_OK)
 

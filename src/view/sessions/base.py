@@ -1,2 +1,2 @@
-import wx
+import wx # type: ignore
 

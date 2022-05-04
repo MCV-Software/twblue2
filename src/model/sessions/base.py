@@ -3,7 +3,7 @@
 import os
 import time
 import logging
-import sqlitedict
+import sqlitedict # type: ignore
 from model import paths, output, config_loader, application
 
 log = logging.getLogger("sessionmanager.session")

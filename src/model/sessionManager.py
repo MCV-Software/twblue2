@@ -6,7 +6,7 @@ import os
 import logging
 from model import output, paths, config_loader
 from controller import config
-from pubsub import pub
+from pubsub import pub # type: ignore
 
 log = logging.getLogger("model.sessionManager")
 

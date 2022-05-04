@@ -1,4 +1,4 @@
-import wx
+import wx # type: ignore
 
 class CreateSessionDialog(wx.Dialog):
     def __init__(self, *args, **kwds):
@@ -24,7 +24,7 @@ class CreateSessionDialog(wx.Dialog):
         self.SetEscapeId(self.cancel.GetId())
         self.Layout()
 
-    def get_response(self):
+    def get_response(self) -> bool:
         if self.ShowModal() == wx.ID_OK:
             return True
         return False

@@ -1,7 +1,7 @@
 # *- coding: utf-8 -*-
 import sys
 import logging
-from accessible_output2 import outputs
+from accessible_output2 import outputs # type: ignore
 
 log = logging.getLogger("model.output")
 
@@ -27,7 +27,7 @@ def setup ():
         return logging.exception("Output: Error during initialization.")
 
 def copy(text):
-    import win32clipboard
+    import win32clipboard # type: ignore
     #Copies text to the clipboard.
     win32clipboard.OpenClipboard()
     win32clipboard.EmptyClipboard()

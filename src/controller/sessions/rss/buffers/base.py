@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """ Main RSS buffer controller """
 import webbrowser
-from typing import Any, List, Dict
-from view.sessions.rss.buffers import base as view
+from typing import Any, List, Dict, Optional
+from view.sessions.rss.buffers import base as view # type: ignore
 from model.sessions.rss.buffers import base as model
 from model import output
 from pubsub import pub # type: ignore
@@ -17,7 +17,7 @@ class RSSBuffer(object):
         self.session = session
         self.parent = parent
         self.view: Optional[Any] = None
-        self.model = model.RSSBuffer(session=self.session.model, name=self.name, *self.args, **self.kwargs)
+        self.model = model.RSSBuffer(session=self.session.model, name=self.name, *self.args, **self.kwargs) # type: ignore
         self.subscribe_events()
 
     def subscribe_events(self):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """ RSS Session model """
-import feedparser
+import feedparser # type: ignore
 from model.sessions import base
 from typing import List, Dict
 

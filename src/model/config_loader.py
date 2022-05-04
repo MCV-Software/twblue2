@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
-from configobj import ConfigObj, ParseError
-from validate import Validator, ValidateError
-from pubsub import pub
+from configobj import ConfigObj, ParseError # type: ignore
+from validate import Validator, ValidateError # type: ignore
+from pubsub import pub # type: ignore
 from logging import getLogger
 
 log = getLogger("config_utils")
