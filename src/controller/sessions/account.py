@@ -36,5 +36,5 @@ class AccountBuffer(object):
     def on_login(self, name: str):
         if self.session.name != name:
             return
-        self.session.create_buffers(force=True)
+        self.session.create_buffers(create_account=False, force=True)
         pub.sendMessage("core.update_buffers", session_id=self.session.session_id)
