@@ -9,26 +9,31 @@ from model import paths, output, config_loader, application
 log = logging.getLogger("sessionmanager.session")
 
 class Session(object):
-    """ toDo: Decorators does not seem to be working when using them in an inherited class."""
+    """ Base session class. This needs to be derived and improved with new methods for every session created at TWBlue. """
 
     def __init__(self, session_id):
-        """ session_id (str): The name of the folder inside the config directory where the session is located."""
+        """ Session constructor
+
+        :param session_id: The name of the folder inside the config directory where the session is located. TWBlue will read configs from this folder.
+        :type session_id: str.
+        """
         super(Session, self).__init__()
         self.session_id = session_id
         self.logged = False
         self.settings = None
         self.db={}
-        # Config specification file.
+        # Config specification file. Override this on every session which include a spec file.
         self.config_spec = "base.defaults"
-        # Session type.
+        # Session type. Override this when creating new sessions.
         self.type = "base"
 
     @property
     def is_logged(self):
+        """ Returns True if user has been logged into the current session. """
         return self.logged
 
     def get_configuration(self):
-        """ Get settings for a session."""
+        """ Load settings for a session. If config doesn't exist for the current session, this function creates it. """
         file_ = os.path.join(paths.config_path(), self.session_id, "session.conf")
         log.debug("Creating config file %s" % (file_,))
         self.settings = config_loader.load_config(os.path.join(paths.config_path(), file_), os.path.join(paths.app_path(), "configspecs", self.config_spec))
@@ -36,16 +41,30 @@ class Session(object):
         self.load_persistent_data()
 
     def init_sound(self):
+        """ Initializes the sound system for current session. """
         pass
 
     def login(self):
+        """ LogsIn the user to the session. This function needs to be overwritten in every new session type. """
         pass
 
     def authorise(self):
+        """ Runs any authorization flow required to retrieve login credentials for user in the current session.
+
+        This needs to be overwritten in every new session class.
+        """
         pass
 
     def get_sized_buffer(self, buffer, size, reversed=False):
-        """ Returns a list with the amount of items specified by size."""
+        """ Returns a sublist with certain amount of items.
+
+        :param buffer: A list of items of any kind.
+        :type buffer: list
+        :param size: The amount of items to be retrieved from the list.
+        :type size: int
+        :param reversed: Whether the list of items is being displayed in reverse order.
+        :type reversed: bool
+        """
         if isinstance(buffer, list) and size != -1 and len(buffer) > size:
             log.debug("Requesting {} items from a list of {} items. Reversed mode: {}".format(size, len(buffer), reversed))
             if reversed == True:
@@ -56,7 +75,7 @@ class Session(object):
             return buffer
 
     def save_persistent_data(self):
-        """ Save the data to a persistent sqlite backed file. ."""
+        """ Save the data to a persistent sqlite backed file in user config. """
         dbname=os.path.join(paths.config_path(), str(self.session_id), "cache.db")
         log.debug("Saving storage information...")
         # persist_size set to 0 means not saving data actually.
@@ -87,7 +106,7 @@ class Session(object):
                 os.remove(dbname)
 
     def load_persistent_data(self):
-        """Import data from a database file from user config."""
+        """Import data from a database file from user config. """
         log.debug("Loading storage data...")
         dbname=os.path.join(paths.config_path(), str(self.session_id), "cache.db")
         # If persist_size is set to 0, we should remove the db file as we are no longer going to save anything.
@@ -130,6 +149,7 @@ class Session(object):
                 pass
 
     def prepare_path(self):
+        """ Creates user config path before attempting to create any settings file. """
         log.debug("Creating %s session in the %s path" % (self.type, self.session_id))
         path = os.path.join(paths.config_path(), self.session_id)
         if not os.path.exists(path):
