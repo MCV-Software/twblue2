@@ -42,8 +42,9 @@ class Session(object):
         self.name="{name} ({type})".format(name=name, type="rss")
         pub.sendMessage("sessionmanager.add_session_to_list", session_data=session_data)
 
-    def create_buffers(self, force: bool = False):
-        pub.sendMessage("core.create_account", session_id=self.session_id, buffer_title=self.name)
+    def create_buffers(self, create_account: bool = True, force: bool = False):
+        if create_account:
+            pub.sendMessage("core.create_account", session_id=self.session_id, buffer_title=self.name)
         # Avoid creating buffers if session is ignored and force is not set to True
         if self.session_id in config.app["sessions"]["ignored_sessions"] and force == False: # type: ignore
             return
