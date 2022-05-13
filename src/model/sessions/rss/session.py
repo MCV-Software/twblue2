@@ -21,7 +21,8 @@ class Session(base.Session):
         self.type = "rss"
         self.name = name
 
-    def login(self):
+    def get_configuration(self):
+        super(Session, self).get_configuration()
         self.settings["session"]["name"] = self.name
         self.settings.write()
 
