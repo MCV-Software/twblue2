@@ -87,11 +87,11 @@ class MainWindow(wx.Frame):
 #  print self.GetSize()
 
     def add_buffer(self, buffer, name):
-        self.tree.AddPage(buffer, name)
+        wx.CallAfter(self.tree.AddPage, buffer, name)
         self.buffers[name] = buffer.GetId()
 
     def insert_buffer(self, buffer, name, pos):
-        self.tree.InsertSubPage(pos, buffer, name)
+        wx.CallAfter(self.tree.InsertSubPage, pos, buffer, name)
         self.buffers[name] = buffer.GetId()
 
     def search_buffer(self, tab_name):
