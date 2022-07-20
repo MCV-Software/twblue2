@@ -2,6 +2,7 @@
 from typing import Any, Optional
 from view.sessions import account as view
 from model.sessions import account as model
+from model.thread_utils import call_threaded
 from pubsub import pub # type: ignore
 
 class AccountBuffer(object):
@@ -37,4 +38,4 @@ class AccountBuffer(object):
         if self.session.name != name:
             return
         self.session.create_buffers(create_account=False, force=True)
-        pub.sendMessage("core.update_buffers", session_id=self.session.session_id)
+        call_threaded(pub.sendMessage, "core.update_buffers", session_id=self.session.session_id)
